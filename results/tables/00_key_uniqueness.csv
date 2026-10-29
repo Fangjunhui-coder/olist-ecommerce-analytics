@@ -1,0 +1,12 @@
+table,key,key_role,rows,null_key_rows,duplicate_excess_rows,rows_in_duplicate_groups
+orders,order_id,候选唯一键检查；邮编和评价键不预设唯一,99441,0,0,0
+order_items,"order_id,order_item_id",候选唯一键检查；邮编和评价键不预设唯一,112650,0,0,0
+order_payments,"order_id,payment_sequential",候选唯一键检查；邮编和评价键不预设唯一,103886,0,0,0
+order_reviews,review_id,候选唯一键检查；邮编和评价键不预设唯一,99224,0,814,1603
+order_reviews,order_id,候选唯一键检查；邮编和评价键不预设唯一,99224,0,551,1098
+order_reviews,"review_id,order_id",候选唯一键检查；邮编和评价键不预设唯一,99224,0,0,0
+customers,customer_id,候选唯一键检查；邮编和评价键不预设唯一,99441,0,0,0
+products,product_id,候选唯一键检查；邮编和评价键不预设唯一,32951,0,0,0
+sellers,seller_id,候选唯一键检查；邮编和评价键不预设唯一,3095,0,0,0
+geolocation,geolocation_zip_code_prefix,候选唯一键检查；邮编和评价键不预设唯一,1000163,0,981148,999120
+translation,product_category_name,候选唯一键检查；邮编和评价键不预设唯一,71,0,0,0

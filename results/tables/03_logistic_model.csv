@@ -1,0 +1,2 @@
+model_orders,unique_buyers,events,category_levels,state_levels,converged,covariance,category_min_orders,state_min_orders
+95824,92747,12272,27,22,True,clustered by customer_unique_id,500,300

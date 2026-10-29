@@ -1,0 +1,4 @@
+result,validation,method
+rfm_cutoffs,passed,independent pandas from raw CSV
+rfm_frequency,passed,independent pandas from raw CSV
+rfm_segments,passed,independent pandas from raw CSV

@@ -1,0 +1,6 @@
+review_timing,delayed,orders,bad_reviews,bad_rate
+after_estimate_before_delivery,1,4429,3600.0,0.8128245653646421
+after_or_at_delivery,0,89263,8258.0,0.09251313534163091
+after_or_at_delivery,1,1908,371.0,0.19444444444444445
+before_estimate_and_delivery,0,180,31.0,0.17222222222222222
+before_estimate_and_delivery,1,44,12.0,0.2727272727272727

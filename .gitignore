@@ -1,0 +1,10 @@
+data/raw/*
+!data/raw/.gitkeep
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.duckdb
+*.duckdb.wal
+# 清洗订单可能与原始记录逐行一致，不提交明细级副本
+results/tables/00_clean_orders.csv

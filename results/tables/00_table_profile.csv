@@ -1,0 +1,10 @@
+table,rows,columns,exact_duplicate_rows
+orders,99441,8,0
+order_items,112650,7,0
+order_payments,103886,5,0
+order_reviews,99224,7,0
+customers,99441,5,0
+products,32951,9,0
+sellers,3095,4,0
+geolocation,1000163,5,261831
+translation,71,2,0

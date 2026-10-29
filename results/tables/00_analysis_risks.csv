@@ -1,0 +1,7 @@
+check_name,value
+delivered_without_items,0
+delivered_without_review,646
+delivered_missing_unique_id,0
+delivered_items_unknown_category,1559
+delivered_orders_multi_review,525
+invalid_review_score,0

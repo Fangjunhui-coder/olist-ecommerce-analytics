@@ -1,0 +1,2 @@
+delayed_orders,delayed_bad,on_time_orders,on_time_bad,risk_difference,risk_difference_ci_low,risk_difference_ci_high,chi2,df,p_value,log10_p_value,phi
+6381,3983,89443,8289,0.5315232880711108,0.5194155324660802,0.543477946673163,15068.908499715766,1,,-3274.359034517984,0.39655529213658053

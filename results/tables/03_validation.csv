@@ -1,0 +1,9 @@
+check,status,method
+review_audit,passed,pandas independently from raw CSV
+order_features,passed,pandas independently from raw CSV
+estimate_and_same_day,passed,pandas independently from raw CSV
+delay_comparison,passed,pandas independently from raw CSV
+delay_bands,passed,pandas independently from raw CSV
+review_timing,passed,pandas independently from raw CSV
+state_delay,passed,pandas independently from raw CSV
+seller_delay,passed,pandas independently from raw CSV

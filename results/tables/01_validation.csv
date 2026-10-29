@@ -1,0 +1,8 @@
+result,validation,method
+overall,passed,independent pandas from raw CSV; monetary aggregation in integer cents
+monthly,passed,independent pandas from raw CSV; monetary aggregation in integer cents
+category_summary,passed,independent pandas from raw CSV; monetary aggregation in integer cents
+category_status_summary,passed,independent pandas from raw CSV; monetary aggregation in integer cents
+state_summary,passed,independent pandas from raw CSV; monetary aggregation in integer cents
+monthly_category,passed,independent pandas from raw CSV; monetary aggregation in integer cents
+monthly_state,passed,independent pandas from raw CSV; monetary aggregation in integer cents
