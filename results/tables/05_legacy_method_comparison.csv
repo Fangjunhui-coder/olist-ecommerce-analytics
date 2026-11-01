@@ -1,0 +1,9 @@
+method,estimand,estimate,n,ci_low,ci_high
+raw_all_reviews,risk_difference,0.5315232880711108,95824,,
+raw_after_delivery,risk_difference,0.10193130910281353,91171,,
+stratified_category,treated_weighted_risk_difference,0.10027220055843243,90717,,
+stratified_customer_state,treated_weighted_risk_difference,0.10084336968516558,91135,,
+PSM_matched_ATT,matched_treated_risk_difference,0.07966457023060797,3816,0.05345911949685535,0.10115303983228512
+seller_FE_LPM,within_seller_adjusted_risk_difference,0.0952025205803526,91171,0.07876779890196427,0.11163724225874093
+logistic_all_reviews,adjusted_odds_ratio_stage3,16.802361248126427,95824,15.857974452082004,17.802988923057242
+logistic_after_delivery,adjusted_odds_ratio_stage3,2.384543662450654,91171,2.1155999627999322,2.6876765825842934
