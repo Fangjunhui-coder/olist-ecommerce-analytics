@@ -1,17 +1,21 @@
 {
   "sample_n": 91171,
   "treated": 1908,
-  "pairs": 1908,
-  "retained_treated_fraction": 1.0,
-  "caliper_logit": 0.2428562830372441,
+  "pairs": 1907,
+  "retained_treated_fraction": 0.999475890985325,
+  "caliper_logit": 0.21411172256350697,
   "support_logit": [
-    -6.665336139241572,
-    -0.2275478042020751
+    -7.630850642518881,
+    -0.5408686079370821
   ],
   "max_abs_smd_before": 0.3562205770292163,
-  "max_abs_smd_after": 0.22144830824681508,
-  "unbalanced_after": 43,
-  "covariates": 3043,
+  "max_abs_smd_after": 0.053787091042935484,
+  "unbalanced_after": 0,
+  "covariates": 68,
   "bootstrap": "1000 fixed-pair resamples, seed 20261101; conditional descriptive CI, not full matching uncertainty",
-  "ps_iterations": 235
+  "ps_iterations": 178,
+  "seller_features": "strict purchase-before and delivery-before current purchase; zero rate with missing-history indicators",
+  "rare_level_min_treated": 20,
+  "exact_category_matching": false,
+  "unbalanced_columns": []
 }

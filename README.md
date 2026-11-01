@@ -79,7 +79,7 @@ python -m unittest discover -s tests -v
 
 ## 诊断归因
 
-新增[阶段4 GMV异动诊断](docs/阶段4_GMV异动诊断.md)与[阶段5 延迟差评因果检验](docs/阶段5_延迟差评因果检验.md)。GMV案例采用LMDI、连乘替代、品类/州/新老客下钻与件数mix/rate分解；延迟差评案例比较分层、PSM与卖家固定效应。PSM匹配后仍有协变量失衡，结果不能宣称因果。
+新增[阶段4 GMV异动诊断](docs/阶段4_GMV异动诊断.md)与[阶段5 延迟差评因果检验](docs/阶段5_延迟差评因果检验.md)。GMV案例采用LMDI、连乘替代、品类/州/新老客下钻与件数mix/rate分解；延迟差评案例比较分层、PSM与卖家固定效应。新版PSM用严格购前卖家历史并合并稀有品类/州，匹配1,907对、68列均达到|SMD|<0.1，风险差10.54个百分点（探索性区间8.39–12.85）；仍不能排除未观测混杂。含卖家one-hot、43列失衡的旧版保留作对照。
 
 新增复现命令（原始全量CSV置于`data/raw/`；本次Python 3.13.9环境锁定在`requirements-diagnosis.txt`，原阶段依赖仍保留）：
 
@@ -87,8 +87,10 @@ python -m unittest discover -s tests -v
 python -m pip install -r requirements-diagnosis.txt
 python src/stage4_diagnosis.py
 python src/stage5_causal.py
-python src/validate.py
+python src/validate_stage4_5.py
 python -m unittest discover -s tests -v
 ```
 
 SQL新增`09_gmv_diagnosis.sql`和`10_delay_review_causal.sql`；表格前缀`04_`/`05_`，图表同前缀。输入哈希、实际运行依赖和独立核验见`results/tables/04_05_provenance.json`与`04_05_validation.json`。阶段4保留全部月表、标记首尾与案例资格；阶段5沿用日期口径和收货后评价子样本。
+
+阶段4–5验证入口为`src/validate_stage4_5.py`。逐单历史特征与稀有水平映射见`05_seller_history.csv`、`05_level_pooling.csv`。

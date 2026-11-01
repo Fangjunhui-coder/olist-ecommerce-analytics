@@ -28,3 +28,18 @@ class AttributionTests(unittest.TestCase):
         pairs,_=match(lp,t,.1)
         self.assertEqual(len(pairs),2);self.assertEqual(len(set(pairs[:,1])),2)
         self.assertTrue((abs(lp[pairs[:,0]]-lp[pairs[:,1]])<=.1).all())
+
+    def test_seller_history_excludes_future_outcomes_and_purchase_ties(self):
+        import duckdb
+        con=duckdb.connect()
+        con.execute("create table order_items(order_id varchar,seller_id varchar,price varchar,order_item_id varchar)")
+        con.execute("insert into order_items values ('known','s','1','1'),('pending','s','1','1'),('tie','s','1','1'),('current','s','1','1')")
+        con.execute("create table orders(order_id varchar,order_purchase_timestamp varchar)")
+        con.execute("insert into orders values ('known','2017-01-01'),('pending','2017-01-02'),('tie','2017-01-03 12:00:00'),('current','2017-01-03 12:00:00')")
+        con.execute("create table delivery_orders(order_id varchar,delivered_at timestamp,delayed integer)")
+        con.execute("insert into delivery_orders values ('known','2017-01-02',1),('pending','2017-01-04',0),('current','2017-01-10',0)")
+        con.execute("create table analysis_orders(order_id varchar,purchased_at timestamp,estimated_at timestamp,delivered_at timestamp,review_answer_at timestamp)")
+        con.execute("insert into analysis_orders values ('current','2017-01-03 12:00:00','2017-01-10','2017-01-10','2017-01-11')")
+        con.execute((Path(__file__).resolve().parents[1]/'sql/10_delay_review_causal.sql').read_text())
+        row=con.execute('select seller_prior_orders,seller_completed_orders,seller_history_delay_rate from causal_orders').fetchone()
+        self.assertEqual(row,(2,1,1.0))

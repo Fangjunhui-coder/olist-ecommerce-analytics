@@ -2,7 +2,6 @@
 import json
 import numpy as np
 import pandas as pd
-from scipy.special import logit
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import OneHotEncoder,StandardScaler
 from scipy.sparse import hstack
@@ -56,19 +55,32 @@ def main():
     dose=d.groupby('delay_band').agg(n=('order_id','size'),bad=('bad_review','sum'),rate=('bad_review','mean')).reset_index();dose.to_csv(OUT/'05_dose_response.csv',index=False)
     # Baseline covariates only; actual transit duration is not controlled.
     num=pd.DataFrame({'log_gmv':np.log1p(d.product_gmv.astype(float)),'log_freight':np.log1p(d.freight.astype(float)),'items':d['items'].astype(float),'cross_state':d.cross_state.astype(float),'expected_days':d.expected_days.astype(float)})
-    cats=d[['category','customer_state','purchase_month','seller_id']].astype(str)
+    ps_num=num.assign(log_seller_prior_orders=np.log1p(d.seller_prior_orders),
+        seller_history_delay_rate=d.seller_history_delay_rate,
+        seller_no_history=d.seller_no_history,seller_no_completed_history=d.seller_no_completed_history)
+    cats=d[['category','customer_state','purchase_month']].astype(str).copy()
+    levels=[]
+    for column in ['category','customer_state']:
+        counts=d[d.delayed.eq(1)][column].value_counts()
+        for level in sorted(d[column].unique()):
+            levels.append(dict(dimension=column,level=level,treated_orders=int(counts.get(level,0)),pooled=counts.get(level,0)<20))
+        cats[column]=cats[column].where(cats[column].map(counts).fillna(0)>=20,'[other]')
+    pd.DataFrame(levels).to_csv(OUT/'05_level_pooling.csv',index=False)
+    history_cols=['order_id','seller_id','seller_prior_orders','seller_completed_orders','seller_prior_late','seller_history_delay_rate','seller_no_history','seller_no_completed_history']
+    d[history_cols].to_csv(OUT/'05_seller_history.csv',index=False)
     enc=OneHotEncoder(handle_unknown='ignore',sparse_output=True);dummy=enc.fit_transform(cats)
-    x=hstack([StandardScaler().fit_transform(num),dummy]).tocsr();t=d.delayed.to_numpy(int)
+    x=hstack([StandardScaler().fit_transform(ps_num),dummy]).tocsr();t=d.delayed.to_numpy(int)
     ps=LogisticRegression(C=1,solver='lbfgs',max_iter=1000,tol=1e-7).fit(x,t)
     if ps.n_iter_.max()>=1000:raise RuntimeError('PS model did not converge')
     lp=ps.decision_function(x);caliper=.2*lp.std(ddof=1);pairs,support=match(lp,t,caliper)
     if len(pairs)==0:raise ValueError('No matches')
-    balance_x=hstack([num.to_numpy(),dummy]).toarray();names=list(num)+list(enc.get_feature_names_out())
+    balance_x=hstack([ps_num.to_numpy(),dummy]).toarray();names=list(ps_num)+list(enc.get_feature_names_out())
     scale=np.sqrt((balance_x[t==1].var(axis=0,ddof=1)+balance_x[t==0].var(axis=0,ddof=1))/2)
     before=smd(balance_x[t==1],balance_x[t==0],scale);after=smd(balance_x[pairs[:,0]],balance_x[pairs[:,1]],scale)
     balance=pd.DataFrame({'covariate':names,'smd_before':before,'smd_after':after});balance['balanced']=balance.smd_after.abs()<.1;balance.to_csv(OUT/'05_balance.csv',index=False)
     pair=pd.DataFrame({'treated_id':d.order_id.iloc[pairs[:,0]].to_numpy(),'control_id':d.order_id.iloc[pairs[:,1]].to_numpy(),'treated_logit':lp[pairs[:,0]],'control_logit':lp[pairs[:,1]],'treated_bad':d.bad_review.iloc[pairs[:,0]].to_numpy(),'control_bad':d.bad_review.iloc[pairs[:,1]].to_numpy()});pair.to_csv(OUT/'05_matches.csv',index=False)
     diff=(pair.treated_bad-pair.control_bad).to_numpy(float);rng=np.random.default_rng(20261101);boot=np.array([rng.choice(diff,len(diff),replace=True).mean() for _ in range(1000)]);lo,hi=np.quantile(boot,[.025,.975]);comparisons.append(dict(method='PSM_matched_ATT',estimand='matched_treated_risk_difference',estimate=diff.mean(),ci_low=lo,ci_high=hi,n=2*len(pair)))
+    legacy=pd.read_csv(OUT/'05_legacy_method_comparison.csv');old=legacy[legacy.method.eq('PSM_matched_ATT')].iloc[0].to_dict();old['method']='PSM_legacy_seller_onehot_unbalanced';comparisons.append(old)
     # Seller fixed effects LPM via within transformation. Cluster SE by seller.
     small=pd.get_dummies(d[['category','customer_state','purchase_month']].astype(str),drop_first=True,dtype=float)
     design=pd.concat([d[['delayed']].astype(float),num,small],axis=1)
@@ -81,7 +93,7 @@ def main():
         r=model[model.term.eq('delayed')].iloc[0]
         comparisons.append(dict(method=label,estimand='adjusted_odds_ratio_stage3',estimate=r.odds_ratio,ci_low=r.ci_lower,ci_high=r.ci_upper,n=len(frame)))
     pd.DataFrame(comparisons).to_csv(OUT/'05_method_comparison.csv',index=False)
-    meta=dict(sample_n=len(d),treated=int(t.sum()),pairs=len(pair),retained_treated_fraction=len(pair)/int(t.sum()),caliper_logit=caliper,support_logit=list(support),max_abs_smd_before=float(abs(before).max()),max_abs_smd_after=float(abs(after).max()),unbalanced_after=int((abs(after)>=.1).sum()),covariates=len(names),bootstrap='1000 fixed-pair resamples, seed 20261101; conditional descriptive CI, not full matching uncertainty',ps_iterations=int(ps.n_iter_.max()))
+    meta=dict(sample_n=len(d),treated=int(t.sum()),pairs=len(pair),retained_treated_fraction=len(pair)/int(t.sum()),caliper_logit=caliper,support_logit=list(support),max_abs_smd_before=float(abs(before).max()),max_abs_smd_after=float(abs(after).max()),unbalanced_after=int((abs(after)>=.1).sum()),covariates=len(names),bootstrap='1000 fixed-pair resamples, seed 20261101; conditional descriptive CI, not full matching uncertainty',ps_iterations=int(ps.n_iter_.max()),seller_features='strict purchase-before and delivery-before current purchase; zero rate with missing-history indicators',rare_level_min_treated=20,exact_category_matching=False,unbalanced_columns=balance.loc[~balance.balanced,'covariate'].tolist())
     (OUT/'05_metadata.json').write_text(json.dumps(meta,indent=2))
     fig,axes=plt.subplots(1,2,figsize=(11,4))
     for treatment,label in [(0,'On time'),(1,'Delayed')]:

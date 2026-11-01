@@ -8,6 +8,21 @@
   "dimension_max_residual": 1.7462298274040222e-10,
   "mix_rate_max_residual": 5.820766091346741e-11,
   "causal_sample": 91171,
-  "matched_pairs": 1908,
-  "att": 0.07966457023060797
+  "matched_pairs": 1907,
+  "att": 0.10540115364446775,
+  "seller_history_rows_checked": 91171,
+  "max_abs_smd_before": 0.35622057702921767,
+  "max_abs_smd_after": 0.05378709104293575,
+  "unbalanced_columns": 0,
+  "att_ci_low": 0.0838883062401678,
+  "att_ci_high": 0.12848715259570004,
+  "psm_legacy": {
+    "pairs": 1908,
+    "max_abs_smd_before": 0.3562205770292163,
+    "max_abs_smd_after": 0.22144830824681508,
+    "unbalanced_columns": 43,
+    "att": 0.0796645702306079
+  },
+  "single_order_buyers": 90557,
+  "single_order_buyer_share": 0.9699972150217443
 }
