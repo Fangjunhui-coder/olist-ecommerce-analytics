@@ -76,3 +76,19 @@ python -m unittest discover -s tests -v
 或者运行 `jupyter lab`，打开 `notebooks/olist_end_to_end.ipynb` 并从头运行。`validate.py` 重新从原始数据构造 pandas 结果，与 SQL 和已保存结果比较，任何不一致都会报错。`docs/report.md`、`docs/interview_notes.md` 与部分说明中的数字是基于本次数据的静态文字；更换数据或规则并重跑后必须重新审查更新，不能假定自动同步。
 
 各汇总 CSV 中比例通常存为小数，例如 0.1 表示 10%；特别地，`repeat_rate_pp_change` 的单位是百分点。按月品类表未出现的组合不等于真实业务为零，跨品类订单数和用户数不可直接加总。
+
+## 诊断归因
+
+新增[阶段4 GMV异动诊断](docs/阶段4_GMV异动诊断.md)与[阶段5 延迟差评因果检验](docs/阶段5_延迟差评因果检验.md)。GMV案例采用LMDI、连乘替代、品类/州/新老客下钻与件数mix/rate分解；延迟差评案例比较分层、PSM与卖家固定效应。PSM匹配后仍有协变量失衡，结果不能宣称因果。
+
+新增复现命令（原始全量CSV置于`data/raw/`；本次Python 3.13.9环境锁定在`requirements-diagnosis.txt`，原阶段依赖仍保留）：
+
+```bash
+python -m pip install -r requirements-diagnosis.txt
+python src/stage4_diagnosis.py
+python src/stage5_causal.py
+python src/validate.py
+python -m unittest discover -s tests -v
+```
+
+SQL新增`09_gmv_diagnosis.sql`和`10_delay_review_causal.sql`；表格前缀`04_`/`05_`，图表同前缀。输入哈希、实际运行依赖和独立核验见`results/tables/04_05_provenance.json`与`04_05_validation.json`。阶段4保留全部月表、标记首尾与案例资格；阶段5沿用日期口径和收货后评价子样本。

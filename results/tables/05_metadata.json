@@ -1,0 +1,17 @@
+{
+  "sample_n": 91171,
+  "treated": 1908,
+  "pairs": 1908,
+  "retained_treated_fraction": 1.0,
+  "caliper_logit": 0.2428562830372441,
+  "support_logit": [
+    -6.665336139241572,
+    -0.2275478042020751
+  ],
+  "max_abs_smd_before": 0.3562205770292163,
+  "max_abs_smd_after": 0.22144830824681508,
+  "unbalanced_after": 43,
+  "covariates": 3043,
+  "bootstrap": "1000 fixed-pair resamples, seed 20261101; conditional descriptive CI, not full matching uncertainty",
+  "ps_iterations": 235
+}

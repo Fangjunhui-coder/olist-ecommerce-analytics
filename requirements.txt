@@ -8,3 +8,5 @@ kaggle==1.7.4.5
 jupyterlab==4.2.5
 ipykernel==6.29.5
 nbclient==0.10.0
+
+scikit-learn==1.6.1

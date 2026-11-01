@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "monthly_rows": 24,
+  "operating_orders": 96478,
+  "operating_buyers": 93358,
+  "gmv": 13221498.11,
+  "factor_max_residual": 1.7462298274040222e-10,
+  "dimension_max_residual": 1.7462298274040222e-10,
+  "mix_rate_max_residual": 5.820766091346741e-11,
+  "causal_sample": 91171,
+  "matched_pairs": 1908,
+  "att": 0.07966457023060797
+}
